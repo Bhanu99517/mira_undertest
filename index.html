@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mira Attendance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              'primary': { // Vibrant Sky Blue
+                '50': '#f0f9ff',
+                '100': '#e0f2fe',
+                '200': '#bae6fd',
+                '300': '#7dd3fc',
+                '400': '#38bdf8',
+                '500': '#0ea5e9',
+                '600': '#0284c7',
+                '700': '#0369a1',
+                '800': '#075985',
+                '900': '#0c4a6e',
+                '950': '#082f49'
+              },
+              'accent': { // Glowing Pink/Fuchsia
+                '50': '#fdf2f8',
+                '100': '#fce7f3',
+                '200': '#fbcfe8',
+                '300': '#f9a8d4',
+                '400': '#f472b6',
+                '500': '#ec4899',
+                '600': '#db2777',
+                '700': '#be185d',
+                '800': '#9d174d',
+                '900': '#831843',
+                '950': '#500724'
+              },
+            },
+            keyframes: {
+              'gradient-bg': {
+                '0%, 100%': { backgroundPosition: '0% 50%' },
+                '50%': { backgroundPosition: '100% 50%' },
+              },
+              'fade-in': {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              'fade-in-down': {
+                '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              'fade-in-up': {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              'scale-in': {
+                '0%': { opacity: '0', transform: 'scale(0.9)' },
+                '100%': { opacity: '1', transform: 'scale(1)' },
+              },
+              'pulse-faint': {
+                '0%, 100%': { opacity: '0.7' },
+                '50%': { opacity: '1' },
+              },
+              'logo-breath': {
+                '0%, 100%': { transform: 'scale(1)' },
+                '50%': { transform: 'scale(1.05)' },
+              },
+              'slide-in-from-left': {
+                '0%': { opacity: '0', transform: 'translateX(-20px)' },
+                '100%': { opacity: '1', transform: 'translateX(0)' },
+              },
+            },
+            animation: {
+              'gradient-bg': 'gradient-bg 15s ease infinite',
+              'fade-in': 'fade-in 0.5s ease-out forwards',
+              'fade-in-down': 'fade-in-down 0.5s ease-out forwards',
+              'fade-in-up': 'fade-in-up 0.6s ease-out forwards',
+              'scale-in': 'scale-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+              'pulse-faint': 'pulse-faint 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'logo-breath': 'logo-breath 4s ease-in-out infinite',
+              'slide-in-from-left': 'slide-in-from-left 0.5s ease-out forwards',
+            },
+            backgroundImage: {
+              'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+            },
+          },
+        },
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+      .sidebar-scroll::-webkit-scrollbar {
+        width: 4px;
+      }
+      .sidebar-scroll::-webkit-scrollbar-thumb {
+        background-color: #4b5563;
+        border-radius: 20px;
+      }
+    </style>
+    <style id="hacker-theme-styles">
+      .super-admin-hacker-theme {
+        --hacker-green-bright: #39ff14;
+        --hacker-green-medium: #00e020;
+        --hacker-green-dark: #008F11;
+        --hacker-bg-dark: #000000;
+        --hacker-bg-medium: #0D0D0D;
+        --hacker-bg-light: #1A1A1A;
+        --hacker-text: #c0c0c0;
+      
+        font-family: 'Fira Code', monospace;
+      }
+      
+      .super-admin-hacker-theme {
+          background-color: var(--hacker-bg-dark) !important;
+          background-image: 
+              radial-gradient(circle at center, rgba(0, 50, 0, 0.5) 0%, transparent 60%),
+              linear-gradient(rgba(0,0,0,0.95), rgba(0,0,0,0.95)),
+              repeating-linear-gradient(0deg, transparent, transparent 1px, var(--hacker-green-dark) 1px, var(--hacker-green-dark) 2px),
+              repeating-linear-gradient(90deg, transparent, transparent 1px, var(--hacker-green-dark) 1px, var(--hacker-green-dark) 2px);
+          background-size: 100% 100%, 100% 100%, 25px 25px, 25px 25px;
+          animation: bg-pan 120s linear infinite;
+      }
+      
+      @keyframes bg-pan {
+        0% { background-position: 0% 0%; }
+        100% { background-position: 100% 100%; }
+      }
+
+      /* Scanline effect */
+      .super-admin-hacker-theme body::after {
+          content: " ";
+          display: block;
+          position: fixed;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          right: 0;
+          background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+          z-index: 9999;
+          background-size: 100% 4px;
+          pointer-events: none;
+          animation: flicker 0.1s infinite;
+      }
+      
+      @keyframes flicker {
+        0% { opacity: 0.1; }
+        50% { opacity: 0.3; }
+        100% { opacity: 0.1; }
+      }
+      
+      .super-admin-hacker-theme .glitch {
+          animation: text-glitch 2.5s infinite;
+      }
+
+      @keyframes text-glitch {
+        0% { text-shadow: 0 0 3px var(--hacker-green-dark), 0 0 5px rgba(57, 255, 20, 0.3); }
+        2% { text-shadow: 0.05em 0 0 rgba(255,0,0,0.75), -0.05em -0.025em 0 rgba(0,255,0,0.75), -0.025em 0.05em 0 rgba(0,0,255,0.75); }
+        4% { text-shadow: 0 0 3px var(--hacker-green-dark), 0 0 5px rgba(57, 255, 20, 0.3); }
+        100% { text-shadow: 0 0 3px var(--hacker-green-dark), 0 0 5px rgba(57, 255, 20, 0.3); }
+      }
+
+      @keyframes blink {
+        50% { opacity: 0; }
+      }
+
+      .super-admin-hacker-theme .terminal-window {
+          position: relative;
+      }
+      .super-admin-hacker-theme .terminal-window::before {
+        content: 'root@mira:~ ' attr(data-title) ' _';
+        display: block;
+        background: var(--hacker-bg-light);
+        color: var(--hacker-green-bright);
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+        border-bottom: 1px solid var(--hacker-green-dark);
+        animation: blink 1s step-end infinite;
+      }
+
+      /* Override Tailwind colors */
+      .super-admin-hacker-theme .dark\:bg-slate-800,
+      .super-admin-hacker-theme .bg-white {
+          background-color: var(--hacker-bg-dark) !important;
+          border: 1px solid var(--hacker-green-dark) !important;
+          box-shadow: 0 0 5px var(--hacker-green-dark) !important;
+      }
+      .super-admin-hacker-theme .dark\:bg-slate-900\/95 {
+        background-color: var(--hacker-bg-dark) !important;
+      }
+      .super-admin-hacker-theme .dark\:text-slate-200, 
+      .super-admin-hacker-theme .dark\:text-white,
+      .super-admin-hacker-theme .text-slate-800,
+      .super-admin-hacker-theme .text-slate-900,
+      .super-admin-hacker-theme .text-gray-900 {
+        color: var(--hacker-green-bright) !important;
+        text-shadow: 0 0 3px var(--hacker-green-dark), 0 0 5px rgba(57, 255, 20, 0.3);
+      }
+      .super-admin-hacker-theme .dark\:text-slate-400,
+      .super-admin-hacker-theme .text-slate-500 {
+        color: var(--hacker-text) !important;
+      }
+      .super-admin-hacker-theme .dark\:border-slate-700,
+      .super-admin-hacker-theme .border-slate-200 {
+        border-color: var(--hacker-green-dark) !important;
+      }
+      .super-admin-hacker-theme .ring-primary-500 {
+          --tw-ring-color: var(--hacker-green-bright) !important;
+      }
+      .super-admin-hacker-theme .text-primary-500 {
+        color: var(--hacker-green-bright) !important;
+      }
+      .super-admin-hacker-theme .bg-primary-600 {
+        background-color: var(--hacker-green-dark) !important;
+        color: var(--hacker-bg-dark) !important;
+        text-shadow: none !important;
+        border: 1px solid var(--hacker-green-bright) !important;
+      }
+      .super-admin-hacker-theme .bg-primary-600:hover {
+        background-color: var(--hacker-green-medium) !important;
+        box-shadow: 0 0 8px var(--hacker-green-bright) !important;
+      }
+      .super-admin-hacker-theme .dark\:hover\:bg-slate-700:hover {
+        background-color: var(--hacker-bg-light) !important;
+      }
+      .super-admin-hacker-theme .shadow-lg {
+        box-shadow: 0 0 8px 0 var(--hacker-green-dark) !important;
+      }
+      .super-admin-hacker-theme .backdrop-blur-lg {
+        backdrop-filter: blur(5px) saturate(1.2) !important;
+      }
+
+      /* Style for revoked/terminated users in hacker theme */
+      .super-admin-hacker-theme .asset-terminated .text-slate-900,
+      .super-admin-hacker-theme .asset-terminated .dark\:text-slate-100 {
+        text-decoration: line-through;
+        text-decoration-color: #ff3914; /* A glitchy red */
+        color: #ff3914 !important;
+        animation: text-glitch-revoked 0.5s infinite;
+      }
+
+      @keyframes text-glitch-revoked {
+        0% { text-shadow: 0 0 2px #ff3914, -1px 1px 0px rgba(0, 255, 0, 0.5); }
+        25% { text-shadow: 1px -1px 0px rgba(255, 0, 0, 0.75); }
+        50% { text-shadow: 0 0 2px #ff3914, 1px -1px 0px rgba(0, 0, 255, 0.5); }
+        100% { text-shadow: 0 0 2px #ff3914; }
+      }
+
+      /* Hacker Logo Style Overrides */
+      .super-admin-hacker-theme .mira-logo-primary {
+        fill: var(--hacker-green-bright) !important;
+        fill-opacity: 0.8 !important; 
+      }
+      .super-admin-hacker-theme .mira-logo-accent {
+          stroke: var(--hacker-green-bright) !important;
+          fill: var(--hacker-green-bright) !important;
+      }
+      .super-admin-hacker-theme .animate-logo-breath {
+        animation: hacker-logo-breath 2s ease-in-out infinite;
+      }
+      @keyframes hacker-logo-breath {
+        0%, 100% { 
+          transform: scale(1); 
+          filter: drop-shadow(0 0 2px var(--hacker-green-dark)); 
+        }
+        50% { 
+          transform: scale(1.05); 
+          filter: drop-shadow(0 0 5px var(--hacker-green-bright)); 
+        }
+      }
+      </style>
+  <script type="importmap">
+{
+  "imports": {
+    "recharts": "https://aistudiocdn.com/recharts@^3.2.1",
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+    "jspdf": "https://aistudiocdn.com/jspdf@^2.5.1",
+    "jspdf-autotable": "https://aistudiocdn.com/jspdf-autotable@^3.8.2",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.20.0",
+    "mongoose": "https://aistudiocdn.com/mongoose@^9.0.0",
+    "@vercel/node": "https://aistudiocdn.com/@vercel/node@^5.5.9",
+    "nodemailer": "https://aistudiocdn.com/nodemailer@^7.0.10"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
