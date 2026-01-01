@@ -2,32 +2,31 @@
 // api/users.ts
 
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { Schema, model, models, FilterQuery } from 'mongoose'
+import mongoose, { Schema } from 'mongoose'
 import dbConnect from './lib/dbConnect'
 
-interface IUser {
-  name: string
-  pin: string
-  role: string
-  email?: string
-  avatar?: string
-}
+/* ================= MODEL ================= */
 
-const UserSchema = new Schema<IUser>(
+const UserSchema = new Schema(
   {
-    name: { type: String, required: true },
-    pin: { type: String, required: true, unique: true },
-    role: { type: String, required: true },
+    name: String,
+    pin: { type: String, unique: true },
+    role: String,
     email: String,
     avatar: String,
   },
   { timestamps: true }
 )
 
-const User = models.User || model<IUser>('User', UserSchema)
+const User =
+  mongoose.models.User || mongoose.model('User', UserSchema)
+
+/* ================= UTILS ================= */
 
 const qp = (v?: string | string[]) =>
   Array.isArray(v) ? v[0] : v
+
+/* ================= HANDLER ================= */
 
 export default async function handler(
   req: VercelRequest,
@@ -39,13 +38,13 @@ export default async function handler(
     if (req.method === 'GET') {
       const pin = qp(req.query.pin)
 
-      const filter: FilterQuery<IUser> = {}
-      if (pin) filter.pin = pin
+      const query: any = {}
+      if (pin) query.pin = pin
 
-      const users = await User.find(filter).lean()
+      const users = await User.find(query).lean()
 
       return res.status(200).json(
-        users.map(u => ({ ...u, id: u._id.toString() }))
+        users.map((u: any) => ({ ...u, id: u._id.toString() }))
       )
     }
 
@@ -62,9 +61,9 @@ export default async function handler(
       if (!pin) return res.status(400).json({ message: 'pin required' })
 
       const updated = await User.findOneAndUpdate(
-        { pin } as FilterQuery<IUser>,
+        { pin } as any,
         req.body,
-        { new: true }
+        { returnDocument: 'after' } as any
       ).lean()
 
       if (!updated) {
@@ -81,10 +80,7 @@ export default async function handler(
       const pin = qp(req.query.pin)
       if (!pin) return res.status(400).json({ message: 'pin required' })
 
-      const deleted = await User.findOneAndDelete(
-        { pin } as FilterQuery<IUser>
-      ).lean()
-
+      const deleted = await User.findOneAndDelete({ pin } as any).lean()
       if (!deleted) {
         return res.status(404).json({ message: 'Not found' })
       }
@@ -98,6 +94,6 @@ export default async function handler(
     return res.status(405).json({ message: 'Method not allowed' })
   } catch (err) {
     console.error(err)
-    return res.status(500).json({ message: 'Internal error' })
+    return res.status(500).json({ message: 'Internal server error' })
   }
 }
