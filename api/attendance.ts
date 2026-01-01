@@ -2,35 +2,18 @@
 // api/attendance.ts
 
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { Schema, model, models, FilterQuery } from 'mongoose'
+import mongoose, { Schema } from 'mongoose'
 import dbConnect from './lib/dbConnect'
 
-/* ================= TYPES ================= */
+/* ================= MODEL ================= */
 
-interface IAttendance {
-  date: string
-  userId: string
-  userName: string
-  userPin: string
-  status: 'Present' | 'Absent'
-  userAvatar?: string
-  timestamp?: string
-  location?: {
-    status?: string
-    coordinates?: string
-    distance_km?: number
-  }
-}
-
-/* ================= SCHEMA ================= */
-
-const AttendanceSchema = new Schema<IAttendance>(
+const AttendanceSchema = new Schema(
   {
-    date: { type: String, required: true },
-    userId: { type: String, required: true },
-    userName: { type: String, required: true },
-    userPin: { type: String, required: true },
-    status: { type: String, enum: ['Present', 'Absent'], required: true },
+    date: String,
+    userId: String,
+    userName: String,
+    userPin: String,
+    status: { type: String, enum: ['Present', 'Absent'] },
     userAvatar: String,
     timestamp: String,
     location: {
@@ -43,9 +26,10 @@ const AttendanceSchema = new Schema<IAttendance>(
 )
 
 const Attendance =
-  models.Attendance || model<IAttendance>('Attendance', AttendanceSchema)
+  mongoose.models.Attendance ||
+  mongoose.model('Attendance', AttendanceSchema)
 
-/* ================= HELPERS ================= */
+/* ================= UTILS ================= */
 
 const qp = (v?: string | string[]) =>
   Array.isArray(v) ? v[0] : v
@@ -59,25 +43,25 @@ export default async function handler(
   await dbConnect()
 
   try {
-    /* -------- GET -------- */
+    /* ---------- GET ---------- */
     if (req.method === 'GET') {
       const date = qp(req.query.date)
       const userPin = qp(req.query.userPin)
 
-      const filter: FilterQuery<IAttendance> = {}
-      if (date) filter.date = date
-      if (userPin) filter.userPin = userPin
+      const query: any = {}
+      if (date) query.date = date
+      if (userPin) query.userPin = userPin
 
-      const records = await Attendance.find(filter).lean()
+      const records = await Attendance.find(query).lean()
 
       return res.status(200).json(
-        records.map(r => ({ ...r, id: r._id.toString() }))
+        records.map((r: any) => ({ ...r, id: r._id.toString() }))
       )
     }
 
-    /* -------- POST -------- */
+    /* ---------- POST ---------- */
     if (req.method === 'POST') {
-      const body = req.body as IAttendance
+      const body = req.body
 
       if (!body.date || !body.userId || !body.userName || !body.userPin) {
         return res.status(400).json({ message: 'Missing fields' })
@@ -86,7 +70,7 @@ export default async function handler(
       const exists = await Attendance.findOne({
         date: body.date,
         userPin: body.userPin,
-      } as FilterQuery<IAttendance>)
+      } as any)
 
       if (exists) {
         return res.status(409).json({ message: 'Already marked' })
@@ -103,7 +87,7 @@ export default async function handler(
       })
     }
 
-    /* -------- PUT -------- */
+    /* ---------- PUT ---------- */
     if (req.method === 'PUT') {
       const id = qp(req.query.id)
       if (!id) return res.status(400).json({ message: 'id required' })
@@ -111,7 +95,7 @@ export default async function handler(
       const updated = await Attendance.findByIdAndUpdate(
         id,
         req.body,
-        { new: true }
+        { returnDocument: 'after' } as any
       ).lean()
 
       if (!updated) {
@@ -124,7 +108,7 @@ export default async function handler(
       })
     }
 
-    /* -------- DELETE -------- */
+    /* ---------- DELETE ---------- */
     if (req.method === 'DELETE') {
       const id = qp(req.query.id)
       if (!id) return res.status(400).json({ message: 'id required' })
